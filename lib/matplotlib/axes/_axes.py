@@ -2673,7 +2673,7 @@ class Axes(_AxesBase):
                  fmt='', ecolor=None, elinewidth=None, capsize=None,
                  barsabove=False, lolims=False, uplims=False,
                  xlolims=False, xuplims=False, errorevery=1, capthick=None,
-                 **kwargs):
+                 borders=0, **kwargs):
         """
         Plot an errorbar graph.
 
@@ -2912,7 +2912,26 @@ class Axes(_AxesBase):
                         in cbook.safezip(x, xerr)]
                 right = [thisx + thiserr for (thisx, thiserr)
                          in cbook.safezip(x, xerr)]
-
+            if borders:
+                if not 'linewidth' in lines_kw:
+                    borderlw = rcParams['lines.linewidth']+borders
+                else:
+                    borderlw = lines_kw['linewidth']+borders
+                if capsize is not None:
+                    bordercs = max(capsize+borders/2, borderlw/2)
+                else:
+                    bordercs = None
+                if capthick is not None:
+                    borderct = capthick+borders
+                else:
+                    borderct = borders/2
+                self.errorbar(x, y, yerr, xerr,
+                              fmt='none', ecolor="k", elinewidth=None, capsize=bordercs,
+                              barsabove=True, lolims=lolims, uplims=uplims,
+                              xlolims=xlolims, xuplims=xuplims, errorevery=errorevery, capthick=borderct,
+                              borders=False, linewidth=borderlw,
+                              **kwargs
+                              )
             # select points without upper/lower limits in x and
             # draw normal errorbars for these points
             noxlims = ~(xlolims | xuplims)
@@ -2936,7 +2955,7 @@ class Axes(_AxesBase):
                 caplines.extend(
                     self.plot(rightup, yup, ls='None', marker=marker,
                               **plot_kw))
-                if capsize > 0:
+                if 0:
                     xlo, ylo = xywhere(x, y, xlolims & everymask)
                     caplines.extend(self.plot(xlo, ylo, 'k|', **plot_kw))
 
@@ -2952,7 +2971,7 @@ class Axes(_AxesBase):
                 caplines.extend(
                     self.plot(leftlo,  ylo, ls='None', marker=marker,
                               **plot_kw))
-                if capsize > 0:
+                if 0:
                     xup, yup = xywhere(x, y, xuplims & everymask)
                     caplines.extend(self.plot(xup, yup, 'k|', **plot_kw))
 
@@ -2999,7 +3018,7 @@ class Axes(_AxesBase):
                 caplines.extend(
                     self.plot(xup, upperup, ls='None', marker=marker,
                               **plot_kw))
-                if capsize > 0:
+                if 0:
                     xlo, ylo = xywhere(x, y, lolims & everymask)
                     caplines.extend(self.plot(xlo, ylo, 'k_', **plot_kw))
 
@@ -3015,7 +3034,7 @@ class Axes(_AxesBase):
                 caplines.extend(
                     self.plot(xlo, lowerlo, ls='None', marker=marker,
                               **plot_kw))
-                if capsize > 0:
+                if 0:
                     xup, yup = xywhere(x, y, uplims & everymask)
                     caplines.extend(self.plot(xup, yup, 'k_', **plot_kw))
 
